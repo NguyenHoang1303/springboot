@@ -2,7 +2,6 @@ package com.product.api.controllers;
 
 import com.product.api.entites.Order;
 import com.product.api.repositories.OrderRepository;
-import com.product.api.responseApi.HandlerResponse;
 import com.product.api.responseApi.RESTPagination;
 import com.product.api.responseApi.RESTResponse;
 import com.product.api.services.OrderService;
@@ -13,15 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -47,82 +43,59 @@ public class OrderController {
             @RequestParam(name = "optionPrice",defaultValue = "0") int optionPrice
 
     ) {
-//        Specification specification = Specification.where(null);
-////        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-//        LocalDate dateTime = LocalDate.parse(from, formatter);
-//        //            Date utilDate = format.parse(from);
-////            System.out.println(format.format(utilDate));
-//        specification =  specification.and(new OrderSpecification(new SearchCriteria("createdAt", ">", "dateTime")));
-////
-//        return orderRepository.findAll(specification);
-
+        System.out.println("0:" + from);
         OptionFilter filter = OptionFilter.OptionFilterBuilder.anOptionFilter()
                 .withPageSize(pageSize)
                 .withPage(page)
                 .withOptionPrice(optionPrice)
                 .withPhone(phone)
                 .withName(name)
+                .withFrom(from)
+                .withTo(to)
                 .withId(id)
                 .withEmail(email)
                 .build();
         Page paging = orderService.findAll(filter);
-        return new RESTResponse.Success()
+        return new ResponseEntity<>(new RESTResponse.Success()
                 .setPagination(new RESTPagination(paging.getNumber() + 1, paging.getSize(), paging.getTotalElements()))
                 .addData(paging.getContent())
-                .buildData();
+                .buildData(), HttpStatus.OK);
 
     }
 
     @GetMapping("/{id}")
-    public Object findById(@PathVariable Integer id) {
-        return new RESTResponse.Success()
+    public ResponseEntity findById(@PathVariable Integer id) {
+        return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(orderService.findById(id))
-                .build();
+                .build(), HttpStatus.OK);
     }
 
     @PostMapping("/add")
-    public HandlerResponse save(@Valid @RequestBody Order order) {
-        return HandlerResponse.HandlerResponseBuilder.aHandlerResponse()
-                .withStatus(HttpStatus.OK.value())
-                .withMessage(HttpStatus.OK.name())
-                .addData(HandlerResponse.TYPE, HandlerResponse.PRODUCTS)
-                .addData(HandlerResponse.ITEMS, orderService.save(order))
-                .build();
+    public ResponseEntity save(@Valid @RequestBody Order order) {
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(orderService.save(order))
+                .build(), HttpStatus.OK);
     }
 
     @PutMapping("/update_status")
-    public HandlerResponse edit(@Valid @RequestBody Integer id, int status) {
-        return HandlerResponse.HandlerResponseBuilder.aHandlerResponse()
-                .withStatus(HttpStatus.OK.value())
-                .withMessage(HttpStatus.OK.name())
-                .addData(HandlerResponse.TYPE, HandlerResponse.PRODUCTS)
-                .addData(HandlerResponse.ITEMS, orderService.updateStatus(id, status))
-                .build();
+    public ResponseEntity edit(@Valid @RequestBody Integer id, int status) {
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(orderService.updateStatus(id, status))
+                .build(), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public HandlerResponse edit(@PathVariable Integer id) {
-        return HandlerResponse.HandlerResponseBuilder.aHandlerResponse()
-                .withStatus(HttpStatus.OK.value())
-                .withMessage(HttpStatus.OK.name())
-                .addData(HandlerResponse.TYPE, HandlerResponse.PRODUCTS)
-                .addData(HandlerResponse.ITEMS, orderService.delete(id))
-                .build();
+    public ResponseEntity edit(@PathVariable Integer id) {
+        return new ResponseEntity<>(new RESTResponse.Success()
+                .addData(orderService.delete(id))
+                .build(), HttpStatus.OK);
     }
 
     @GetMapping("/{id}/detail")
-    public Object test(@PathVariable Integer id) {
-        return new RESTResponse.Success()
+    public ResponseEntity test(@PathVariable Integer id) {
+        return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(orderService.findById(id).getOrderDetails())
-                .build();
-//        return HandlerResponse.HandlerResponseBuilder.aHandlerResponse()
-//                .withStatus(HttpStatus.OK.value())
-//                .withMessage(HttpStatus.OK.name())
-//                .addData(HandlerResponse.TYPE, HandlerResponse.ORDER_DETAIL)
-//                .addData(HandlerResponse.ITEMS, orderService.findById(id).getOrderDetails())
-//                .build();
+                .build(), HttpStatus.OK);
     }
 
 }

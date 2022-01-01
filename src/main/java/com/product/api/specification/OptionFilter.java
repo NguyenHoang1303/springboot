@@ -12,6 +12,8 @@ public class OptionFilter {
     private String name;
     private String email;
     private String phone;
+    private String from;
+    private String to;
     private int optionPrice;
     private int page;
     private int pageSize;
@@ -23,6 +25,8 @@ public class OptionFilter {
         private String name;
         private String email;
         private String phone;
+        private String from;
+        private String to;
         private int optionPrice;
         private int page;
         private int pageSize;
@@ -59,6 +63,16 @@ public class OptionFilter {
             return this;
         }
 
+        public OptionFilterBuilder withFrom(String from) {
+            this.from = from;
+            return this;
+        }
+
+        public OptionFilterBuilder withTo(String to) {
+            this.to = to;
+            return this;
+        }
+
         public OptionFilterBuilder withOptionPrice(int optionPrice) {
             this.optionPrice = optionPrice;
             return this;
@@ -81,6 +95,8 @@ public class OptionFilter {
             optionFilter.setName(name);
             optionFilter.setEmail(email);
             optionFilter.setPhone(phone);
+            optionFilter.setFrom(from);
+            optionFilter.setTo(to);
             optionFilter.setOptionPrice(optionPrice);
             optionFilter.setPage(page);
             optionFilter.setPageSize(pageSize);

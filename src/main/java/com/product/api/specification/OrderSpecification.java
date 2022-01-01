@@ -5,6 +5,8 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.criteria.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -19,11 +21,21 @@ public class OrderSpecification implements Specification<Order> {
     @Override
     public Predicate toPredicate
             (Root<Order> root, CriteriaQuery<?> query, CriteriaBuilder builder) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         if (criteria.getOperation().equalsIgnoreCase(">")) {
-            return builder.greaterThanOrEqualTo(
-                    root.get(criteria.getKey()), criteria.getValue().toString());
+            if (criteria.getKey().equalsIgnoreCase("createdAt")){
+               LocalDate date = LocalDate.parse(criteria.getValue().toString(), formatter);
+                return builder.greaterThanOrEqualTo(root.get(criteria.getKey()), date);
+            }
+            return builder.greaterThanOrEqualTo(root.get(criteria.getKey()), criteria.getValue().toString());
 
         } else if (criteria.getOperation().equalsIgnoreCase("<")) {
+            if (criteria.getKey().equalsIgnoreCase("createdAt")){
+                LocalDate date = LocalDate.parse(criteria.getValue().toString(), formatter);
+                return builder.lessThanOrEqualTo(root.get(criteria.getKey()), date);
+            }
+
             return builder.lessThanOrEqualTo(
                     root.get(criteria.getKey()), criteria.getValue().toString());
 
@@ -53,6 +65,9 @@ public class OrderSpecification implements Specification<Order> {
 //            );
 //            return predicate;
 //        }
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+//        LocalDate date = LocalDate.parse("2021-12-01 00:00", formatter);
+//        return builder.greaterThanOrEqualTo(root.get("createdAt"), date);
         return null;
 
     }

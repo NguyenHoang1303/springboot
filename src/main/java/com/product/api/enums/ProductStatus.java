@@ -1,4 +1,4 @@
-package com.product.api.repositories.enums;
+package com.product.api.enums;
 
 public enum ProductStatus {
     SOLD_OUT("soldOut", 0),

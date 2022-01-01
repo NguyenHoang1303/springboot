@@ -5,7 +5,8 @@ import com.product.api.repositories.ProductRepository;
 import com.product.api.responseApi.RESTPagination;
 import com.product.api.responseApi.RESTResponse;
 import com.product.api.services.IProductService;
-import com.product.api.specification.OptionFilter;
+import com.product.api.specification.FieldFilter;
+import com.product.api.specification.ObjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -33,18 +34,18 @@ public class ProductController {
             @RequestParam(name = "id", defaultValue = "-1") int id,
             @RequestParam(name = "categoryId", defaultValue = "-1") int categoryId,
             @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "optionPrice", defaultValue = "-1") int optionPrice
+            @RequestParam(name = "minPrice",defaultValue = "-1") int minPrice,
+            @RequestParam(name = "maxPrice",defaultValue = "-1") int maxPrice
     ) {
-        OptionFilter filter = OptionFilter.OptionFilterBuilder.anOptionFilter()
-                .withPageSize(pageSize)
-                .withPage(page)
-                .withCategoryId(categoryId)
-                .withOptionPrice(optionPrice)
-                .withName(name)
+        ObjectFilter filter = ObjectFilter.ObjectFilterBuilder.anObjectFilter()
                 .withId(id)
+                .withPageSize(pageSize).withPage(page)
+                .withCategoryId(categoryId)
+                .withMaxPrice(maxPrice).withMinPrice(minPrice)
+                .withName(name)
+                .withField(new FieldFilter.Product().createdField().build())
                 .build();
         Page paging = productService.findAll(filter);
-
         return new ResponseEntity<>(new RESTResponse.Success()
                 .setPagination(new RESTPagination(paging.getNumber() + 1, paging.getSize(), paging.getTotalElements()))
                 .addData(paging.getContent())
@@ -52,10 +53,10 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/detail/{id}")
-    public Object findById(@PathVariable Integer id) {
-        return new RESTResponse.Success()
+    public ResponseEntity findById(@PathVariable Integer id) {
+        return new ResponseEntity<>(new RESTResponse.Success()
                 .addData(productService.findById(id))
-                .build();
+                .build(),HttpStatus.OK);
     }
 
     @PostMapping("/add")

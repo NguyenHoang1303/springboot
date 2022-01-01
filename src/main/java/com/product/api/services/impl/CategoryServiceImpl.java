@@ -4,8 +4,8 @@ import com.product.api.entites.Category;
 import com.product.api.exceptions.NotFoundException;
 import com.product.api.repositories.CategoryRepository;
 import com.product.api.services.ICategoryService;
-import com.product.api.specification.OptionFilter;
-import com.product.api.specification.OrderSpecification;
+import com.product.api.specification.ObjectFilter;
+import com.product.api.specification.HandlerSpecification;
 import com.product.api.specification.SearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,16 +23,16 @@ public class CategoryServiceImpl implements ICategoryService {
     @Autowired
     CategoryRepository categoryRepo;
 
-    public Page findAll(OptionFilter filter){
+    public Page findAll(ObjectFilter filter){
         Specification specification = Specification.where(null);
 
         if (filter.getName() != null && filter.getName().length() > 0) {
-            specification =  specification.and(new OrderSpecification(new SearchCriteria("name", ":", filter.getName())));
+            specification =  specification.and(new HandlerSpecification(new SearchCriteria("name", ":", filter.getName())));
         }
 
 
         if (filter.getId() != -1) {
-            specification =  specification.and(new OrderSpecification(new SearchCriteria("id", ":", filter.getId())));
+            specification =  specification.and(new HandlerSpecification(new SearchCriteria("id", ":", filter.getId())));
         }
         if (filter.getPage() <= 0) {
             filter.setPage(1);

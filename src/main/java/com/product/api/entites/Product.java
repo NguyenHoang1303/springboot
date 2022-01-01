@@ -7,6 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,27 +64,26 @@ public class Product {
 
     private Integer status;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @Column(name = "created_at")
-    private Date createdAt;
+    private LocalDate createdAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @Column(name = "updated_at")
-    private Date updatedAt;
+    private LocalDate updatedAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
+
     @Column(name = "deleted_at")
-    private Date deletedAt;
+    private LocalDate deletedAt;
 
     public void setInfo(Product newInfo ){
-        java.util.Date date = new java.util.Date();
-        java.sql.Date sqlDate= new java.sql.Date(date.getTime());
+
         this.name = newInfo.getName();
         this.price = newInfo.getPrice();
         this.description = newInfo.getDescription();
         this.thumbnail = newInfo.getThumbnail();
         this.detail = newInfo.getDetail();
         this.category_id = newInfo.getCategory_id();
-        this.updatedAt = sqlDate;
+        this.updatedAt = LocalDate.now();
     }
 }

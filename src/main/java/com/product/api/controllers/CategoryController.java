@@ -4,7 +4,7 @@ import com.product.api.entites.Category;
 import com.product.api.responseApi.RESTPagination;
 import com.product.api.responseApi.RESTResponse;
 import com.product.api.services.ICategoryService;
-import com.product.api.specification.OptionFilter;
+import com.product.api.specification.ObjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -28,7 +28,7 @@ public class CategoryController {
             @RequestParam(name = "id", defaultValue = "-1") int id,
             @RequestParam(name = "name", required = false) String name
     ) {
-        OptionFilter filter = OptionFilter.OptionFilterBuilder.anOptionFilter()
+        ObjectFilter filter = ObjectFilter.ObjectFilterBuilder.anObjectFilter()
                 .withPageSize(pageSize)
                 .withPage(page)
                 .withName(name)

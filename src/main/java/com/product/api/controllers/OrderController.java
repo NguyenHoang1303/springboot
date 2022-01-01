@@ -5,19 +5,15 @@ import com.product.api.repositories.OrderRepository;
 import com.product.api.responseApi.RESTPagination;
 import com.product.api.responseApi.RESTResponse;
 import com.product.api.services.OrderService;
-import com.product.api.specification.OptionFilter;
-import com.product.api.specification.OrderSpecification;
-import com.product.api.specification.SearchCriteria;
+import com.product.api.specification.FieldFilter;
+import com.product.api.specification.ObjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -35,25 +31,24 @@ public class OrderController {
             @RequestParam(name = "page", defaultValue = "1") int page,
             @RequestParam(name = "pageSize", defaultValue = "10") int pageSize,
             @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "nameProduct", required = false) String nameProduct,
             @RequestParam(name = "id", defaultValue = "-1") int id,
             @RequestParam(name = "from", required = false) String from,
             @RequestParam(name = "to", required = false) String to,
             @RequestParam(name = "email", required = false) String email,
             @RequestParam(name = "phone", required = false) String phone,
-            @RequestParam(name = "optionPrice",defaultValue = "0") int optionPrice
+            @RequestParam(name = "minPrice",defaultValue = "-1") int minPrice,
+            @RequestParam(name = "maxPrice",defaultValue = "-1") int maxPrice
 
     ) {
-        System.out.println("0:" + from);
-        OptionFilter filter = OptionFilter.OptionFilterBuilder.anOptionFilter()
-                .withPageSize(pageSize)
-                .withPage(page)
-                .withOptionPrice(optionPrice)
-                .withPhone(phone)
-                .withName(name)
-                .withFrom(from)
-                .withTo(to)
+        ObjectFilter filter = ObjectFilter.ObjectFilterBuilder.anObjectFilter()
                 .withId(id)
-                .withEmail(email)
+                .withPageSize(pageSize).withPage(page)
+                .withMaxPrice(maxPrice).withMinPrice(minPrice)
+                .withPhone(phone).withName(name).withEmail(email)
+                .withNameProduct(nameProduct)
+                .withFrom(from).withTo(to)
+                .withField(new FieldFilter.Order().createdField().build())
                 .build();
         Page paging = orderService.findAll(filter);
         return new ResponseEntity<>(new RESTResponse.Success()

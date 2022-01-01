@@ -10,6 +10,15 @@ public class SearchCriteria {
 
     }
 
+    @Override
+    public String toString() {
+        return "SearchCriteria{" +
+                "key='" + key + '\'' +
+                ", operation='" + operation + '\'' +
+                ", value=" + value +
+                '}';
+    }
+
     public SearchCriteria(final String key, final String operation, final Object value) {
         super();
         this.key = key;

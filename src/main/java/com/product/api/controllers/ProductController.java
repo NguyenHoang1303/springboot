@@ -5,7 +5,7 @@ import com.product.api.repositories.ProductRepository;
 import com.product.api.responseApi.RESTPagination;
 import com.product.api.responseApi.RESTResponse;
 import com.product.api.services.IProductService;
-import com.product.api.specification.FieldFilter;
+import com.product.api.specification.FieldProduct;
 import com.product.api.specification.ObjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -43,7 +43,7 @@ public class ProductController {
                 .withCategoryId(categoryId)
                 .withMaxPrice(maxPrice).withMinPrice(minPrice)
                 .withName(name)
-                .withField(new FieldFilter.Product().createdField().build())
+                .withField(FieldProduct.createdField())
                 .build();
         Page paging = productService.findAll(filter);
         return new ResponseEntity<>(new RESTResponse.Success()

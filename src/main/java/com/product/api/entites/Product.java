@@ -23,6 +23,7 @@ public class Product {
     private Integer id;
 
     @NotEmpty(message = "Product name is required")
+    @Column(name = "name")
     private String name;
 
     @NotNull(message = "Price is required")

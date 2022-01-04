@@ -9,6 +9,17 @@ import java.util.HashMap;
 @Setter
 public class ObjectFilter {
 
+    public static final String FROM = "from";
+    public static final String TO = "to";
+    public static final String ID = "id";
+    public static final String MAX_PRICE = "maxPrice";
+    public static final String MIN_PRICE = "minPrice";
+    public static final String PRICE = "price";
+    public static final String NAME = "name";
+    public static final String PHONE = "phone";
+    public static final String EMAIL = "email";
+    public static final String CREATED_AT = "createdAt";
+
     private int id;
     private int categoryId;
     private int minPrice;
@@ -21,6 +32,7 @@ public class ObjectFilter {
     private String phone;
     private String from;
     private String to;
+    private int checkOut = -1;
     private HashMap<String,String> mapField;
 
     public static final class ObjectFilterBuilder {
@@ -36,6 +48,7 @@ public class ObjectFilter {
         private String phone;
         private String from;
         private String to;
+        private int checkOut = -1;
         private HashMap<String,String> mapField;
 
         private ObjectFilterBuilder() {
@@ -104,6 +117,12 @@ public class ObjectFilter {
             this.to = to;
             return this;
         }
+
+        public ObjectFilterBuilder withCheckOut(int checkOut) {
+            this.checkOut = checkOut;
+            return this;
+        }
+
         public ObjectFilterBuilder withField(HashMap<String,String> mapField){
             this.mapField = mapField;
             return this;
@@ -123,6 +142,7 @@ public class ObjectFilter {
             objectFilter.setPhone(phone);
             objectFilter.setFrom(from);
             objectFilter.setTo(to);
+            objectFilter.setCheckOut(checkOut);
             objectFilter.setMapField(mapField);
             return objectFilter;
         }

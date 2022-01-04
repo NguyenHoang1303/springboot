@@ -5,7 +5,8 @@ import com.product.api.repositories.OrderRepository;
 import com.product.api.responseApi.RESTPagination;
 import com.product.api.responseApi.RESTResponse;
 import com.product.api.services.OrderService;
-import com.product.api.specification.FieldFilter;
+import com.product.api.specification.FieldOrder;
+import com.product.api.specification.FieldProduct;
 import com.product.api.specification.ObjectFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,7 +39,9 @@ public class OrderController {
             @RequestParam(name = "email", required = false) String email,
             @RequestParam(name = "phone", required = false) String phone,
             @RequestParam(name = "minPrice",defaultValue = "-1") int minPrice,
-            @RequestParam(name = "maxPrice",defaultValue = "-1") int maxPrice
+            @RequestParam(name = "maxPrice",defaultValue = "-1") int maxPrice,
+            @RequestParam(name = "checkOut", defaultValue = "-1") int checkOut
+
 
     ) {
         ObjectFilter filter = ObjectFilter.ObjectFilterBuilder.anObjectFilter()
@@ -47,9 +50,10 @@ public class OrderController {
                 .withMaxPrice(maxPrice).withMinPrice(minPrice)
                 .withPhone(phone).withName(name).withEmail(email)
                 .withNameProduct(nameProduct)
-                .withFrom(from).withTo(to)
-                .withField(new FieldFilter.Order().createdField().build())
+                .withFrom(from).withTo(to).withCheckOut(checkOut)
+                .withField(FieldOrder.createdField())
                 .build();
+        System.out.println("fieldOrder: " + FieldOrder.createdField());
         Page paging = orderService.findAll(filter);
         return new ResponseEntity<>(new RESTResponse.Success()
                 .setPagination(new RESTPagination(paging.getNumber() + 1, paging.getSize(), paging.getTotalElements()))

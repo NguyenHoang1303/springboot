@@ -1,11 +1,12 @@
 package com.product.api.responseApi;
 
 import com.google.gson.Gson;
-import com.product.api.entites.Order;
+import com.product.api.entity.Order;
+import com.product.api.util.HandlerDate;
 import org.springframework.http.HttpStatus;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /*
@@ -100,8 +101,10 @@ public class RESTResponse {
 
         public HashMap<String, Object> build() {
             RESTResponse restResponse = new RESTResponse();
+            restResponse.addResponse("time", LocalDateTime.now().format(DateTimeFormatter.ofPattern(HandlerDate.PARENT_DETAIL)));
             restResponse.addResponse("status", this.code);
             restResponse.addResponse("message", this.message);
+            restResponse.addResponse("data", new ArrayList<>());
             return restResponse.getResponse();
         }
     }
@@ -115,7 +118,7 @@ public class RESTResponse {
         private RESTPagination pagination;
 
         public Success() {
-            this.status = 1;
+            this.status = HttpStatus.OK.value();
             this.message = "Success";
             this.data = new ArrayList<>();
         }
@@ -171,39 +174,29 @@ public class RESTResponse {
             }
             return restResponse.getResponse();
         }
-    }
 
-    public static void main(String[] args) throws ParseException {
+        public static void main(String[] args) {
 
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+        System.out.println("Error example: " + new Gson().toJson(
+                new Error()
+                        .setStatus(HttpStatus.BAD_REQUEST.value())
+                        .setMessage("Everything is going to be !okie")
+                        .addError("title", "It required")
+                        .addError("content", "Required too")
+                        .build()));
 
-        try {
-            java.util.Date utilDate = format.parse("2014/04/13");
-            java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-            System.out.println(sqlDate);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        System.out.println("Simple error example: " + new Gson().toJson(
+                new SimpleError()
+                        .setCode(1)
+                        .setMessage("Yolo oko")
+                        .build()));
+        System.out.println("Success response example: " + new Gson().toJson(
+                new Success()
+                        .setPagination(new RESTPagination(2, 10, 4))
+                        .addData(new Order())
+                        .addData(new Order())
+                        .setStatus(HttpStatus.OK.value())
+                        .build()));
         }
-
-//        System.out.println("Error example: " + new Gson().toJson(
-//                new Error()
-//                        .setStatus(HttpStatus.BAD_REQUEST.value())
-//                        .setMessage("Everything is going to be !okie")
-//                        .addError("title", "It required")
-//                        .addError("content", "Required too")
-//                        .build()));
-//
-//        System.out.println("Simple error example: " + new Gson().toJson(
-//                new SimpleError()
-//                        .setCode(1)
-//                        .setMessage("Yolo oko")
-//                        .build()));
-//        System.out.println("Success response example: " + new Gson().toJson(
-//                new Success()
-//                        .setPagination(new RESTPagination(2, 10, 4))
-//                        .addData(new Order())
-//                        .addData(new Order())
-//                        .setStatus(HttpStatus.OK.value())
-//                        .build()));
     }
 }

@@ -18,6 +18,7 @@ public class ObjectFilter {
     public static final String NAME = "name";
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
+    public static final String IS_REMOVED = "isRemoved";
     public static final String CREATED_AT = "createdAt";
 
     private int id;
@@ -33,7 +34,9 @@ public class ObjectFilter {
     private String from;
     private String to;
     private int checkOut = -1;
-    private HashMap<String,String> mapField;
+    private int isRemoved;
+    private HashMap<String, String> mapField;
+
 
     public static final class ObjectFilterBuilder {
         private int id;
@@ -49,7 +52,8 @@ public class ObjectFilter {
         private String from;
         private String to;
         private int checkOut = -1;
-        private HashMap<String,String> mapField;
+        private int isRemoved;
+        private HashMap<String, String> mapField;
 
         private ObjectFilterBuilder() {
         }
@@ -123,7 +127,12 @@ public class ObjectFilter {
             return this;
         }
 
-        public ObjectFilterBuilder withField(HashMap<String,String> mapField){
+        public ObjectFilterBuilder withIsRemoved(int isRemoved) {
+            this.isRemoved = isRemoved;
+            return this;
+        }
+
+        public ObjectFilterBuilder withField(HashMap<String, String> mapField) {
             this.mapField = mapField;
             return this;
         }
@@ -144,6 +153,7 @@ public class ObjectFilter {
             objectFilter.setTo(to);
             objectFilter.setCheckOut(checkOut);
             objectFilter.setMapField(mapField);
+            objectFilter.setIsRemoved(isRemoved);
             return objectFilter;
         }
     }

@@ -23,7 +23,6 @@ public class HandlerResponse {
     private HashMap<String, Object> body;
 
 
-
     public HandlerResponse() {
     }
 
@@ -62,7 +61,7 @@ public class HandlerResponse {
         }
 
         public HandlerResponseBuilder addData(String key, Object value) {
-            if(this.data == null){
+            if (this.data == null) {
                 this.data = new HashMap<>();
             }
             this.data.put(key, value);

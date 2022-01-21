@@ -1,6 +1,7 @@
 package com.product.api.specification;
 
 import com.product.api.constant.Operation;
+import com.product.api.exception.RequestValidException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -14,22 +15,18 @@ public class HandlerQuery {
 
         HashMap<String, String> mapField = filter.getMapField();
         Specification specification = Specification.where(null);
-        System.out.println("0.name: ");
         if (filter.getName() != null && filter.getName().length() > 0) {
-            System.out.println("1.name: " + filter.getName());
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.NAME),
                     Operation.EQUAL,
                     filter.getName())));
         }
 
-//        if (filter.getNameProduct() != null && filter.getNameProduct().length() > 0) {
-//            System.out.println("2:" + filter.getNameProduct());
-//            specification = specification.and(new HandlerSpecification(new SearchCriteria("name", "join", filter.getNameProduct())));
-//        }
+        if (filter.getNameProduct() != null && filter.getNameProduct().length() > 0) {
+            specification = specification.and(new HandlerSpecification(new SearchCriteria("name", "join", filter.getNameProduct())));
+        }
 
         if (filter.getEmail() != null && filter.getEmail().length() > 0) {
-            System.out.println("email: " + filter.getEmail());
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.EMAIL),
                     Operation.EQUAL,
@@ -37,15 +34,16 @@ public class HandlerQuery {
         }
 
         if (filter.getPhone() != null && filter.getPhone().length() > 0) {
-            System.out.println("phone: " + filter.getPhone());
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.PHONE),
                     Operation.EQUAL,
                     filter.getPhone())));
         }
 
-        if (filter.getId() != -1) {
-            System.out.println("id: " + filter.getId());
+        int id = filter.getId();
+        if (id < 0) {
+            throw new RequestValidException("Order is not found! Please check the information again.");
+        } else if (id > 0) {
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.ID),
                     Operation.EQUAL,
@@ -53,7 +51,6 @@ public class HandlerQuery {
         }
 
         if (filter.getFrom() != null && filter.getFrom().length() > 0) {
-            System.out.println("from: " + filter.getFrom());
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.CREATED_AT),
                     Operation.GREATER_THAN_OR_EQUAL_TO,
@@ -67,27 +64,41 @@ public class HandlerQuery {
                     filter.getTo())));
         }
 
-        if (filter.getMinPrice() > 0) {
+        int minPrice = filter.getMinPrice();
+        if (minPrice < 0) {
+            throw new RequestValidException("Order is not found! Please check the information again.");
+        } else if (minPrice > 0) {
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.PRICE),
-                    Operation.GREATER_THAN_OR_EQUAL_TO,
-                    filter.getMinPrice())));
+                    Operation.GREATER_THAN_OR_EQUAL_TO, filter.getMinPrice())));
         }
 
-        if (filter.getMaxPrice() > 0) {
+        int maxPrice = filter.getMaxPrice();
+        if (maxPrice < 0) {
+            throw new RequestValidException("Order is not found! Please check the information again.");
+        } else if (maxPrice > 0) {
             specification = specification.and(new HandlerSpecification(new SearchCriteria(
                     mapField.get(ObjectFilter.PRICE),
-                    Operation.lESS_THAN_OR_EQUAL_TO,
-                    filter.getMaxPrice())));
+                    Operation.lESS_THAN_OR_EQUAL_TO, filter.getMaxPrice())));
         }
 
-        if (filter.getCheckOut() != -1) {
-            System.out.println("checkOut: " + filter.getCheckOut());
+        int checkOut = filter.getCheckOut();
+        if (checkOut != 0 && checkOut != 1 && checkOut != -1) {
+            throw new RequestValidException("Order is not found! Please check the information again.");
+        } else if (checkOut == -1) {
+            specification = specification.and(null);
+        } else {
             specification = specification.and(new HandlerSpecification((new SearchCriteria(
                     mapField.get(FieldOrder.CHECK_OUT),
-                    Operation.EQUAL,
-                    filter.getCheckOut()
-            ))));
+                    Operation.EQUAL, filter.getCheckOut()))));
+        }
+
+        if (filter.getIsRemoved() != 1 && filter.getIsRemoved() != 0) {
+            throw new RequestValidException("Order is not found! Please check the information again.");
+        } else {
+            specification = specification.and(new HandlerSpecification((new SearchCriteria(
+                    mapField.get(ObjectFilter.IS_REMOVED),
+                    Operation.EQUAL, filter.getIsRemoved()))));
         }
 
         return specification;
